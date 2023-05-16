@@ -1,0 +1,33 @@
+{% extends "base.html" %} 
+{% load widget_tweaks %}
+
+{% block title %}Log In{% endblock %} 
+{% block content %}
+
+<div
+  class="d-flex align-items-center justify-content-center"
+  style="height: 100vh"
+>
+  <div class="" style="border: 1px solid #ccc; border-radius: 10px; padding: 30px; background-color: #f8f9fa;">
+    <h2 class="text-center">Log In</h2>
+    <form method="POST" action="{% url 'login' %}">
+      {% csrf_token %} 
+      {% for field in form %}
+      <div class="form-group mb-3">
+        <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
+        {{ field|add_class:"form-control"  }}
+        {% if field.help_text %}
+        <small id="{{ field.auto_id }}Help" class="form-text text-muted">{{ field.help_text }}</small>
+        {% endif %}
+      </div>
+      {% endfor %}
+    <center><button type="submit" class="btn btn-success">Log In</button></center>
+      <br>
+      <div style="text-align: center;">
+      <p style="margin:0px">Don't have an account yet?  <a href="{% url 'register' %}">Create Account</a></p>
+      <p style="margin:0px">Continue as Guest?  <a href="{% url 'index' %}">Back to Home</a></p>
+    </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

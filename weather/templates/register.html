@@ -1,0 +1,41 @@
+{% extends "base.html" %} 
+{% load widget_tweaks %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div
+  class="d-flex align-items-center justify-content-center"
+  style="height: 100vh;"
+>
+  <div class="" style="border: 1px solid #ccc; border-radius: 10px; padding: 60px; background-color: #f8f9fa;">
+    <h2 class="text-center">Create Account</h2>
+    <p><br>Password Requirements:
+      <ul>
+      <li>A special character</li>
+      <li>An uppercase character</li>
+      <li>A minimum of 8 characters</li>
+      <li>An alphabetic character</li>
+      <li>A numeric character</li>
+      <li>A lowercase character</li></ul></p>
+    <form method="POST" action="{% url 'register' %}">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group mb-3">
+        <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
+        {{ field|add_class:"form-control" }}
+        {% for error in field.errors %}
+          <div class="invalid-feedback" style="display: block;">{{ error }}</div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+      <center><button type="submit" class="btn btn-success">Register</button></center>
+      <br>
+      <div style="text-align: center;">
+        <p style="margin:0px">Already have an account?  <a href="{% url 'login' %}">Login</a></p>
+        <p style="margin:0px">Continue as Guest?  <a href="{% url 'index' %}">Back to Home</a></p>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% load static %}
+
+<style>
+/* Add styles for the custom navbar */
+.custom-navbar {
+  font-size: 1.1rem;
+  transition: all 0.3s;
+  z-index: 9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.custom-navbar.scrolled {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+}
+
+.logo-full,
+.logo-small {
+  transition: opacity 0.3s;
+}
+
+.logo-small.d-none {
+  display: none;
+  opacity: 0;
+}
+
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-fixed custom-navbar" style="padding:2px">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'index' %}">
+        <img src="{% static 'finallogo.jpg' %}" alt="Roofing Big" height="45" class="d-inline-block align-text-top logo-full">
+        <img src="{% static 'smalllogo.jpg' %}" alt="Roofing Small" height="30" class="d-inline-block align-text-top logo-small d-none">
+      </a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'customers' %}active{% endif %}" aria-current="page" href="{% url 'customers' %}">Customers</a>
+          </li>
+          </ul>
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+        {% if request.user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownAbout" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user-circle fa-lg"></i>
+              <span class="ms-2">{{ request.user.username }}</span>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownAbout">
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+          </ul>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Login</a>
+        </li>
+      {% endif %}
+      </ul>
+      </div>
+    </div>
+  </nav>
+  

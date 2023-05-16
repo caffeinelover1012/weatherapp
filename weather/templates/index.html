@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us{% endblock %}
+
+
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 950,
+    easing: 'ease-in-out',
+    once: true,
+  });
+</script>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+
+<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
+
+<style>
+  .img-fluid {
+    max-height: 100%;
+    max-width: 100%;
+    display: block;
+    align-self: center;
+    justify-content: center;
+  }
+  @media (min-width: 992px) {
+    .img-fluid {
+      max-height: 100%;
+      max-width: 350px;
+    }
+  }
+
+  .about-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+  }
+
+  .card-body {
+    padding: 0;
+  }
+  .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      padding: 25px;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-5px);
+    }
+
+    .section-title {
+      font-family: 'Roboto', sans-serif;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .img-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+
+
+  <div class="container">
+    <h1 class="mb-4 text-center" style="font-family: 'Roboto', sans-serif; font-weight: bold; font-size: 48px;">About</h1>
+
+    <div class="row mt-5">
+      <div class="col-md-6" data-aos="fade-up">
+        <div class="card mb-4">
+          <h2 class="section-title">Why Roofing?</h2>
+          <p>ROOOFOOFOFOOFOFOOOFFOOF</p>
+        </div>
+      </div>
+    </div>
+    </div>
+    
+
+{% endblock %}
+
+
