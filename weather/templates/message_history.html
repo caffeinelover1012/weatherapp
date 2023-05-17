@@ -12,13 +12,13 @@
       </tr>
     </thead>
     <tbody>
-      {% for message in messages %}
-      <tr>
-        <th scope="row">{{ message.id }}</th>
-        <td>{{ message.customer }}</td>
-        <td>{{ message.text }}</td>
-        <td>{{ message.send_date }}</td>
-      </tr>
+        {% for message in message_history %}
+        <tr>
+          <th scope="row">{{ message.id }}</th>
+          <td>{{ message.customer }}</td>
+          <td>{{ message.text }}</td>
+          <td>{{ message.send_date }}</td>
+        </tr>
       {% endfor %}
     </tbody>
   </table>

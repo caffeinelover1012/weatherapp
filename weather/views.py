@@ -144,5 +144,5 @@ def send_message_view(request):
     return render(request, 'send_message.html', {'form': form})
 
 def message_history(request):
-    messages = Message.objects.all().order_by('-send_date')
-    return render(request, 'message_history.html', {'messages': messages})
+    message_history = Message.objects.all().order_by('-send_date')
+    return render(request, 'message_history.html', {'message_history': message_history})
