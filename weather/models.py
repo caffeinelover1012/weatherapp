@@ -22,3 +22,10 @@ class Customer(models.Model):
 
     def __str__(self):
         return f'Customer {self.full_name}'
+
+class Message(models.Model):
+    # customer_id = models.ForeignKey("Customer", on_delete=models.CASCADE)
+    
+    subject = models.CharField(max_length=64, blank=True, null=False)
+    body = models.CharField(max_length=512, blank=True, null=False)
+    date_time = models.DateTimeField()

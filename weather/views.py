@@ -4,10 +4,15 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils import timezone
 from .forms import LoginForm, RegistrationForm
-from .models import Customer
+from .models import Customer, Message
 import json
 from .forms import UploadFileForm
 from .utils import process_excel
+
+from datetime import datetime
+from django.http import HttpResponse
+
+
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
@@ -86,3 +91,18 @@ def parse_excel(request):
 def customers(request):
     customers = Customer.objects.all()
     return render(request, 'customers.html', {'customers': customers})
+
+def create_message(request):
+    return render(request, 'create-message.html', {})
+
+def message_sent(request):
+    if request.method == 'POST':
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        # process the message data as needed
+
+        new_message = Message(subject=subject, body=message, date_time=datetime.now())
+        new_message.save()
+        return HttpResponse('LIGMA request.')
+    else:
+        return HttpResponse('Invalid request.')
