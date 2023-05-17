@@ -1,13 +1,20 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from django.urls import reverse
 from django.utils import timezone
 from .forms import LoginForm, RegistrationForm
 from .models import Customer
 import json
 from .forms import UploadFileForm
 from .utils import process_excel
+from django.shortcuts import get_object_or_404
+from twilio.rest import Client
+from .models import Message, Customer
+from django.conf import settings
+
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
@@ -86,3 +93,33 @@ def parse_excel(request):
 def customers(request):
     customers = Customer.objects.all()
     return render(request, 'customers.html', {'customers': customers})
+
+
+def send_message(message_id):
+    message = get_object_or_404(Message, id=message_id)
+
+    # You need to set these values to your Twilio Account SID and Auth token
+    account_sid = 'AC42589e35c4322239bc687d7a46d47632'
+    auth_token = 'f9edf75550296ce6847705832344730a'
+    client = Client(account_sid, auth_token)
+    print(message)
+    phone_number = message.customer.phone_number
+    print(message.customer)
+    print(phone_number)
+    if phone_number:
+        twilio_message = client.messages.create(
+            body=message.text,
+            from_='+18556425052',  # This is your Twilio phone number
+            to=phone_number
+        )
+
+        # Update the message as sent
+        message.sent = True
+        message.save()
+    return 
+    # return HttpResponseRedirect(reverse('messages'))
+
+def send_to_ezra(request):
+    messages = Message.objects.get(id=1)
+    send_message(1)
+    return render(request, 'success.html')

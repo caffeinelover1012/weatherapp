@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 class Customer(models.Model):
@@ -22,3 +23,12 @@ class Customer(models.Model):
 
     def __str__(self):
         return f'Customer {self.full_name}'
+
+class Message(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    text = models.TextField()
+    send_date = models.DateTimeField(default=timezone.now)
+    sent = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Message to {self.customer.full_name} at {self.send_date}'

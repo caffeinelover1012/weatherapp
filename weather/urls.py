@@ -10,5 +10,5 @@ urlpatterns = [
     path('customers/', views.customers, name='customers'),
     path('upload', views.parse_excel, name='upload'), 
     path('logout/', views.user_logout, name='logout'),
-
+    path('send/', views.send_to_ezra, name='send')
 ]
