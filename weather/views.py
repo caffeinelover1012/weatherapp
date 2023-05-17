@@ -16,6 +16,7 @@ from .models import Message, Customer
 from django.conf import settings
 from django import forms
 from .forms import MessageForm
+from .filters import CustomerFilter
 
 # Create your views here.
 def index(request):
@@ -146,3 +147,7 @@ def send_message_view(request):
 def message_history(request):
     message_history = Message.objects.all().order_by('-send_date')
     return render(request, 'message_history.html', {'message_history': message_history})
+
+def customers(request):
+    filter = CustomerFilter(request.GET, queryset=Customer.objects.all())
+    return render(request, 'customers.html', {'filter': filter})

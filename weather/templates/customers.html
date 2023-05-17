@@ -1,7 +1,28 @@
 {% extends 'base.html' %}
-
 {% block content %}
   <div class="container">
+<!-- customers.html -->
+<div class="row">
+  <div class="col-lg-3 mb-4" style="margin-top:5rem">
+      <div class="card">
+          <div class="card-header">Search</div>
+          <div class="card-body">
+              <form method="GET">
+                  <div class="mb-3">
+                      <label class="form-label">{{ filter.form.full_name.label }}</label>
+                      <input type="text" name="{{ filter.form.full_name.name }}" value="{{ filter.form.full_name.value|default:'' }}" class="form-control">
+                  </div>
+                  <div class="mb-3">
+                      <label class="form-label">{{ filter.form.zip_code.label }}</label>
+                      <input type="text" name="{{ filter.form.zip_code.name }}" value="{{ filter.form.zip_code.value|default:'' }}" class="form-control">
+                  </div>
+                  <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
+              </form>
+          </div>
+      </div>
+  </div>
+  <div class="col-lg-8">
+
     <h1 class="mt-4">Customers</h1>
     <table class="table table-striped mt-4">
       <thead>
@@ -15,7 +36,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for customer in customers %}
+        {% for customer in filter.qs %}
           <tr>
             <th scope="row">{{ forloop.counter }}</th>
             <td>{{ customer.full_name }}</td>
@@ -31,5 +52,7 @@
         {% endfor %}
       </tbody>
     </table>
+  </div>
+  </div>
   </div>
 {% endblock %}

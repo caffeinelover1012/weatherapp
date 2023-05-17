@@ -1,7 +1,17 @@
 import re
 import pandas as pd
 from openpyxl import load_workbook
+import requests
 
+def get_nearby_zip_codes(zipcode, radius):
+    endpoint = f'https://www.zipcodeapi.com/rest/{API_KEY}/radius.json/{zipcode}/{radius}/mile'
+    response = requests.get(endpoint)
+    if response.status_code == 200:
+        data = response.json()
+        return [zip_info['zip_code'] for zip_info in data['zip_codes']]
+    else:
+        return []
+    
 def process_excel(file_name, nrows):
     # Load workbook
     wb = load_workbook(filename=file_name, read_only=True)
