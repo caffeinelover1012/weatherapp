@@ -17,6 +17,9 @@ from django.conf import settings
 from django import forms
 from .forms import MessageForm
 from .filters import CustomerFilter
+from django.views.generic.edit import UpdateView, DeleteView, FormView
+from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 def index(request):
@@ -92,12 +95,6 @@ def parse_excel(request):
     
     return render(request, 'upload.html', {'form': form})
     
-
-def customers(request):
-    customers = Customer.objects.all()
-    return render(request, 'customers.html', {'customers': customers})
-
-
 def send_message(message_id):
     message = get_object_or_404(Message, id=message_id)
 
@@ -105,10 +102,10 @@ def send_message(message_id):
     account_sid = 'AC42589e35c4322239bc687d7a46d47632'
     auth_token = 'f9edf75550296ce6847705832344730a'
     client = Client(account_sid, auth_token)
-    print(message)
+    # print(message)
     phone_number = message.customer.phone_number
-    print(message.customer)
-    print(phone_number)
+    # print(message.customer)
+    # print(phone_number)
     if phone_number:
         twilio_message = client.messages.create(
             body=message.text,
@@ -121,11 +118,6 @@ def send_message(message_id):
         message.save()
     return 
     # return HttpResponseRedirect(reverse('messages'))
-
-def send_to_ezra(request):
-    messages = Message.objects.get(id=1)
-    send_message(1)
-    return render(request, 'success.html')
 
 def send_message_view(request):
     if request.method == 'POST':
@@ -151,3 +143,53 @@ def message_history(request):
 def customers(request):
     filter = CustomerFilter(request.GET, queryset=Customer.objects.all())
     return render(request, 'customers.html', {'filter': filter})
+
+# views.py
+class CustomerUpdateView(UpdateView):
+    model = Customer
+    template_name = 'customer.html'
+    fields = ['phone_number', 'email', 'full_name', 'address', 'zip_code']
+
+    def get_object(self):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(Customer, id=id_)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['customer'] = self.get_object()
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('customer', kwargs={'id': self.object.id})
+
+class CustomerDeleteView(DeleteView):
+    model = Customer
+    template_name = 'confirm_delete.html'
+    success_url = reverse_lazy('customers')
+
+    def get_object(self):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(Customer, id=id_)
+
+class SendMessageView(FormView):
+    template_name = 'send_message.html'
+    form_class = MessageForm
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['customer'] = self.kwargs.get('id')
+        return initial
+
+    def form_valid(self, form):
+        message = form.save(commit=False)
+        message.customer = get_object_or_404(Customer, id=self.kwargs.get('id'))
+        message.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['customer'] = get_object_or_404(Customer, id=self.kwargs.get('id'))  # add this line
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('customer', kwargs={'id': self.kwargs.get('id')})

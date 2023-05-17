@@ -1,58 +1,59 @@
 {% extends 'base.html' %}
 {% block content %}
   <div class="container">
-<!-- customers.html -->
-<div class="row">
-  <div class="col-lg-3 mb-4" style="margin-top:5rem">
-      <div class="card">
+    <div class="row">
+      <div class="col-lg-3 mb-4" style="margin-top:5rem">
+        <div class="card">
           <div class="card-header">Search</div>
-          <div class="card-body">
+            <div class="card-body">
               <form method="GET">
-                  <div class="mb-3">
-                      <label class="form-label">{{ filter.form.full_name.label }}</label>
-                      <input type="text" name="{{ filter.form.full_name.name }}" value="{{ filter.form.full_name.value|default:'' }}" class="form-control">
-                  </div>
-                  <div class="mb-3">
-                      <label class="form-label">{{ filter.form.zip_code.label }}</label>
-                      <input type="text" name="{{ filter.form.zip_code.name }}" value="{{ filter.form.zip_code.value|default:'' }}" class="form-control">
-                  </div>
-                  <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
+                <div class="mb-3">
+                  <label class="form-label">{{ filter.form.full_name.label }}</label>
+                  <input type="text" name="{{ filter.form.full_name.name }}" value="{{ filter.form.zip_code.value|default:'' }}" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">{{ filter.form.zip_code.label }}</label>
+                  <input type="text" name="{{ filter.form.zip_code.name }}" value="{{ filter.form.zip_code.value|default:'' }}" class="form-control">
+                </div>
+                <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
               </form>
+            </div>
           </div>
-      </div>
-  </div>
-  <div class="col-lg-8">
+        </div>
 
-    <h1 class="mt-4">Customers</h1>
-    <table class="table table-striped mt-4">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Full Name</th>
-          <th scope="col">Phone Number</th>
-          <th scope="col">Email</th>
-          <th scope="col">Address</th>
-          <th scope="col">Zip Code</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for customer in filter.qs %}
-          <tr>
-            <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ customer.full_name }}</td>
-            <td>{{ customer.phone_number }}</td>
-            <td>{{ customer.email }}</td>
-            <td>{{ customer.address }}</td>
-            <td>{{ customer.zip_code }}</td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="6" class="text-center">No customers found</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  </div>
+        <div class="col-lg-8">
+          <h1 class="mt-4">Customers</h1>
+          <table class="table table-striped mt-4 table-hover">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col"></th>
+                <th scope="col">Full Name</th>
+                <th scope="col">Phone Number</th>
+                <th scope="col">Email</th>
+                <th scope="col">Address</th>
+                <th scope="col">Zip Code</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for customer in filter.qs %}
+                <tr>
+                  <th scope="row">{{ forloop.counter }}</th>
+                  <td><i class="fas fa-user-circle"></i></td>
+                  <td><a href="{% url 'customer' id=customer.id %}">{{ customer.full_name }}</a></td>
+                  <td>{{ customer.phone_number }}</td>
+                  <td>{{ customer.email }}</td>
+                  <td>{{ customer.address }}</td>
+                  <td>{{ customer.zip_code }}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="7" class="text-center">No customers found</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
   </div>
 {% endblock %}

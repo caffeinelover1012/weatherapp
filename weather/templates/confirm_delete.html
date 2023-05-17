@@ -1,0 +1,24 @@
+<!-- confirm_delete.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center" style="margin-top:5rem">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="mb-0">Delete Customer</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>Are you sure you want to delete this customer?</p>
+                        <form method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-danger" type="submit">Yes, delete</button>
+                            <a href="{% url 'customer' id=customer.id %}" class="btn btn-secondary">Cancel</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
