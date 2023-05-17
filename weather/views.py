@@ -14,6 +14,8 @@ from django.shortcuts import get_object_or_404
 from twilio.rest import Client
 from .models import Message, Customer
 from django.conf import settings
+from django import forms
+from .forms import MessageForm
 
 # Create your views here.
 def index(request):
@@ -123,3 +125,24 @@ def send_to_ezra(request):
     messages = Message.objects.get(id=1)
     send_message(1)
     return render(request, 'success.html')
+
+def send_message_view(request):
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.save()
+
+            send_message(message.id)  # Call the function to send the message
+
+            messages.success(request, "Message sent successfully.")
+            return redirect('send_message_view')
+    else:
+        form = MessageForm()
+
+    return render(request, 'send_message.html', {'form': form})
+
+def message_history(request):
+    messages = Message.objects.all().order_by('-send_date')
+    return render(request, 'message_history.html', {'messages': messages})

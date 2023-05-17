@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from .models import Customer
+from .models import Message, Customer
 from django.utils import timezone
 from django.db import models
 
@@ -22,3 +22,13 @@ class RegistrationForm(UserCreationForm):
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['customer', 'text', 'send_date']
+        widgets = {
+            'customer': forms.Select(attrs={'class': 'form-control'}),
+            'text': forms.Textarea(attrs={'class': 'form-control'}),
+            'send_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'})
+        }  

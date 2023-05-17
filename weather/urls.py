@@ -10,5 +10,7 @@ urlpatterns = [
     path('customers/', views.customers, name='customers'),
     path('upload', views.parse_excel, name='upload'), 
     path('logout/', views.user_logout, name='logout'),
+    path('send_message/', views.send_message_view, name='send_message_view'),
+    path('message_history/', views.message_history, name='message_history'),
     path('send/', views.send_to_ezra, name='send')
 ]
