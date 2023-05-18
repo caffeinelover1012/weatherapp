@@ -22,7 +22,12 @@
                       <option value="{{ choice.0 }}" {% if filter.form.search_by.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
                       {% endfor %}
                   </select>
-              </div>              
+                </div>         
+                <div class="mb-3 form-check">
+                  <input class="form-check-input" type="checkbox" name="{{ filter.form.exclude_missing_contact.name }}" id="excludeMissingContact" {% if filter.form.exclude_missing_contact.value %}checked{% endif %}>
+                  <label class="form-check-label" for="excludeMissingContact">Exclude Missing Contact Info</label>
+                </div>
+              
                 <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
               </form>
             </div>
@@ -32,34 +37,40 @@
         <div class="col-lg-8">
           <h1 class="mt-4">Customers</h1>
           <table class="table table-striped mt-4 table-hover">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col"></th>
-                <th scope="col">Full Name</th>
-                <th scope="col">Phone Number</th>
-                <th scope="col">Email</th>
-                <th scope="col">Address</th>
-                <th scope="col">Zip Code</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for customer in filter.qs %}
+              <thead>
                 <tr>
-                  <th scope="row">{{ forloop.counter }}</th>
-                  <td><i class="fas fa-user-circle"></i></td>
-                  <td><a href="{% url 'customer' id=customer.id %}">{{ customer.full_name }}</a></td>
-                  <td>{{ customer.phone_number }}</td>
-                  <td>{{ customer.email }}</td>
-                  <td>{{ customer.address }}</td>
-                  <td>{{ customer.zip_code }}</td>
+                  <th scope="col">#</th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                  <th scope="col">Full Name</th>
+                  <th scope="col">Phone Number</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Address</th>
+                  <th scope="col">Zip Code</th>
                 </tr>
-              {% empty %}
-                <tr>
-                  <td colspan="7" class="text-center">No customers found</td>
-                </tr>
-              {% endfor %}
-            </tbody>
+              </thead>
+              <tbody>
+                {% for customer in filter.qs %}
+                  <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>
+                      {% if customer.missing_contact_info %}
+                        <i class="fas fa-flag text-danger"></i>
+                      {% endif %}
+                    </td>
+                    <td><i class="fas fa-user-circle"></i></td>
+                    <td><a href="{% url 'customer' id=customer.id %}">{{ customer.full_name }}</a></td>
+                    <td>{{ customer.phone_number }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>{{ customer.address }}</td>
+                    <td>{{ customer.zip_code }}</td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="8" class="text-center">No customers found</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
           </table>
         </div>
       </div>

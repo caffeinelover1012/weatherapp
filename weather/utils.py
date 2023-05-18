@@ -4,6 +4,8 @@ from openpyxl import load_workbook
 import requests
 from uszipcode import SearchEngine
 
+API_KEY = 'AIzaSyBJB4L6udpCiLujeNeseP548aYJa1m4pwM'
+
 def get_rain_affected_zips(api_key, weather):
     if weather=="Sun":
         return set(['85281', '85280', '85234','85282'])
@@ -70,7 +72,7 @@ def process_excel(file_name, nrows):
         if match:
             return match.group(0)
         return None
-
+    
     # Apply the functions to the relevant columns
     df['PhoneNumbers'] = df['PhoneNumbers'].apply(extract_phone_number)
     df['ShippingAddress'] = df['BillingAddress'].apply(extract_zip_code)

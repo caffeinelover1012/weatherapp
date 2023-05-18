@@ -21,6 +21,9 @@ class Customer(models.Model):
             )
         ]
 
+    def missing_contact_info(self):
+        return self.phone_number is None or self.email is None or self.email.lower() == 'nan'
+
     def __str__(self):
         return f'Customer {self.full_name}'
 
