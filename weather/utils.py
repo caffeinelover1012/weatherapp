@@ -2,6 +2,39 @@ import re
 import pandas as pd
 from openpyxl import load_workbook
 import requests
+from uszipcode import SearchEngine
+
+def get_rain_affected_zips(api_key, weather):
+    if weather=="Sun":
+        return set(['85281', '85280', '85234','85282'])
+    search = SearchEngine()
+    # A list of large cities to check. You could expand this list as needed.
+    cities = ["Tempe", "Mesa", "Houston", "Phoenix", "Gilbert"]
+    affected_zips = []
+
+    for city in cities:
+        # Get the current weather for the city
+        response = requests.get(f"http://api.openweathermap.org/data/2.5/weather?q={city},us&appid={api_key}")
+        data = response.json()
+
+        print(data)
+
+        # If the city is currently experiencing the specified weather, add all its zip codes to the list
+        try:
+            if data['weather'][0]['main'].lower() == weather.lower():
+                zipcodes = search.by_city_and_state(city, "US")
+                for zipcode in zipcodes:
+                    affected_zips.append(zipcode.zipcode)
+        except KeyError as e:
+            print(f"Key error: {e}")
+
+    return set(affected_zips)
+
+def get_affected_zip_codes(weather_condition):
+    # Add your logic to get the affected zip codes based on the weather condition
+    x= get_rain_affected_zips('42c4aedf6be59e305e18ba215a373a9b',weather_condition)
+    print("ZIPS",x)
+    return x
 
 def get_nearby_zip_codes(zipcode, radius):
     endpoint = f'https://www.zipcodeapi.com/rest/{API_KEY}/radius.json/{zipcode}/{radius}/mile'

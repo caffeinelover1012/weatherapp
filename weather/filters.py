@@ -1,13 +1,25 @@
-import django_filters
-from fuzzywuzzy import fuzz
-from django.db.models import Q
+from django import forms
+from django_filters import FilterSet, CharFilter, ChoiceFilter
 from .models import Customer
-from .utils import get_nearby_zip_codes
-    
-class CustomerFilter(django_filters.FilterSet):
-    full_name = django_filters.CharFilter(lookup_expr='icontains')
-    zip_code = django_filters.CharFilter(lookup_expr='exact')
+from .utils import get_affected_zip_codes  # import the method for getting zip codes
+
+
+WEATHER_CHOICES = [('Rain', 'Rain'),
+        ('Clouds', 'Clouds'),
+        ('Sun', 'Sun')]
+
+class CustomerFilter(FilterSet):
+    full_name = CharFilter(field_name='full_name', lookup_expr='icontains', label='Full Name')
+    zip_code = CharFilter(field_name='zip_code', lookup_expr='icontains', label='Zip Code')
+    search_by = ChoiceFilter(field_name='zip_code', lookup_expr='in', label='Search by', 
+                             choices=WEATHER_CHOICES, method='filter_by_weather')
 
     class Meta:
         model = Customer
         fields = ['full_name', 'zip_code']
+
+    def filter_by_weather(self, queryset, name, value):
+        if value:
+            affected_zip_codes = get_affected_zip_codes(value)  # get the zip codes affected by the weather
+            return queryset.filter(zip_code__in=affected_zip_codes)
+        return queryset
