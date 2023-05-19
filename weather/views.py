@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.urls import reverse
 from django.utils import timezone
-from .forms import LoginForm, RegistrationForm
+from .forms import CustomerForm, LoginForm, RegistrationForm
 from .models import Customer
 import json
 from .forms import UploadFileForm
@@ -143,6 +143,23 @@ def message_history(request):
 def customers(request):
     filter = CustomerFilter(request.GET, queryset=Customer.objects.all())
     return render(request, 'customers.html', {'filter': filter})
+
+
+def add_customer(request):
+    if request.method == "POST":
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Customer created successfully.")
+            return redirect('customers')
+        else:
+            messages.error(request, "Could not create customer!")
+    else:
+        form = CustomerForm()
+
+    return render(request, 'add_customer.html', {'form': form})
+
+
 
 # views.py
 class CustomerUpdateView(UpdateView):

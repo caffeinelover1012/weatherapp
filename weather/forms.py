@@ -5,6 +5,12 @@ from .models import Message, Customer
 from django.utils import timezone
 from django.db import models
 
+
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['full_name', 'phone_number', 'email', 'address', 'zip_code']
+
 class LoginForm(forms.Form):
     username = forms.CharField(label='Username', max_length=64)
     password = forms.CharField(label='Password', max_length=64, widget=forms.PasswordInput)
