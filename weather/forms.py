@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from .models import Message, Customer
 from django.utils import timezone
 from django.db import models
-
+import requests
 
 class CustomerForm(forms.ModelForm):
     class Meta:
