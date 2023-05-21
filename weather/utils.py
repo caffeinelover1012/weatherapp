@@ -3,40 +3,35 @@ import pandas as pd
 from openpyxl import load_workbook
 import requests
 from uszipcode import SearchEngine
-
-API_KEY = 'AIzaSyBJB4L6udpCiLujeNeseP548aYJa1m4pwM'
-
-def get_rain_affected_zips(api_key, weather):
-    if weather=="Sun":
-        return set(['85281', '85280', '85234','85282'])
-    search = SearchEngine()
-    # A list of large cities to check. You could expand this list as needed.
-    cities = ["Tempe", "Mesa", "Houston", "Phoenix", "Gilbert"]
-    affected_zips = []
-
-    for city in cities:
-        # Get the current weather for the city
-        response = requests.get(f"http://api.openweathermap.org/data/2.5/weather?q={city},us&appid={api_key}")
-        data = response.json()
-
-        print(data)
-
-        # If the city is currently experiencing the specified weather, add all its zip codes to the list
-        try:
-            if data['weather'][0]['main'].lower() == weather.lower():
-                zipcodes = search.by_city_and_state(city, "US")
-                for zipcode in zipcodes:
-                    affected_zips.append(zipcode.zipcode)
-        except KeyError as e:
-            print(f"Key error: {e}")
-
-    return set(affected_zips)
+from .models import Customer
 
 def get_affected_zip_codes(weather_condition):
-    # Add your logic to get the affected zip codes based on the weather condition
-    x= get_rain_affected_zips('42c4aedf6be59e305e18ba215a373a9b',weather_condition)
-    print("ZIPS",x)
-    return x
+    affected_zip_codes = set()  # Set to store unique affected zip codes
+    unique_zip_codes = set(Customer.objects.exclude(zip_code=None).values_list('zip_code', flat=True))  # Get all unique zip codes
+
+    for zip_code in unique_zip_codes:
+        response = requests.get(f'http://api.weatherapi.com/v1/current.json?key=ab0a585060344e8aaf670744232105&q={zip_code}&aqi=no')
+        data = response.json()
+
+        # If response contains 'error', the API request was unsuccessful
+        if 'error' in data:
+            # print(data['error']['message'])
+            continue
+
+        # Checking conditions for different weather parameters
+        condition_text = data['current']['condition']['text'].lower()
+        wind_mph = data['current']['wind_mph']
+
+        if weather_condition.lower() == 'sunny' and 'sunny' in condition_text:
+            affected_zip_codes.add(zip_code)
+        elif weather_condition.lower() == 'rain' and 'rain' in condition_text:
+            affected_zip_codes.add(zip_code)
+        elif weather_condition.lower() == 'wind' and wind_mph > 30:
+            affected_zip_codes.add(zip_code)
+
+    return affected_zip_codes  # return the set of affected zip codes
+
+
 
 def get_nearby_zip_codes(zipcode, radius):
     endpoint = f'https://www.zipcodeapi.com/rest/{API_KEY}/radius.json/{zipcode}/{radius}/mile'

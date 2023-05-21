@@ -6,9 +6,11 @@ from django.forms import CheckboxInput
 from .utils import get_affected_zip_codes  # import the method for getting zip codes
 
 
-WEATHER_CHOICES = [('Rain', 'Rain'),
-        ('Clouds', 'Clouds'),
-        ('Sun', 'Sun')]
+WEATHER_CHOICES = [
+    ('Sunny', 'Sunny'),
+    ('Rain ', 'Rain'),
+    ('Wind', 'Wind')
+]
 
 class CustomerFilter(FilterSet):
     full_name = CharFilter(field_name='full_name', lookup_expr='icontains', label='Full Name')

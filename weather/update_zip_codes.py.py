@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from your_app_name.models import Customer
+from .models import Customer
 import requests
 
 API_KEY = '42c4aedf6be59e305e18ba215a373a9b'
