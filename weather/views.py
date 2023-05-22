@@ -201,6 +201,7 @@ class SendMessageView(FormView):
         message = form.save(commit=False)
         message.customer = get_object_or_404(Customer, id=self.kwargs.get('id'))
         message.save()
+        send_message(message.id)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
