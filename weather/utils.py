@@ -6,11 +6,13 @@ from uszipcode import SearchEngine
 from .models import Customer
 
 def get_affected_zip_codes(weather_condition):
+    # All unique zip codes in the database
+    unique_zip_codes = set(Customer.objects.exclude(zip_code__isnull=True).values_list('zip_code', flat=True))
+    
     affected_zip_codes = set()  # Set to store unique affected zip codes
-    unique_zip_codes = set(Customer.objects.exclude(zip_code=None).values_list('zip_code', flat=True))  # Get all unique zip codes
 
-    for zip_code in unique_zip_codes:
-        response = requests.get(f'http://api.weatherapi.com/v1/current.json?key=ab0a585060344e8aaf670744232105&q={zip_code}&aqi=no')
+    for zip_code in unique_zip_codes:  # iterating through zip codes
+        response = requests.get(f'http://api.weatherapi.com/v1/forecast.json?key=ab0a585060344e8aaf670744232105&q={zip_code}&days=1&aqi=no')
         data = response.json()
 
         # If response contains 'error', the API request was unsuccessful
@@ -19,14 +21,10 @@ def get_affected_zip_codes(weather_condition):
             continue
 
         # Checking conditions for different weather parameters
-        condition_text = data['current']['condition']['text'].lower()
+        precip_in = data['forecast']['forecastday'][0]['day']['totalprecip_in']
         wind_mph = data['current']['wind_mph']
 
-        if weather_condition.lower() == 'sunny' and 'sunny' in condition_text:
-            affected_zip_codes.add(zip_code)
-        elif weather_condition.lower() == 'rain' and 'rain' in condition_text:
-            affected_zip_codes.add(zip_code)
-        elif weather_condition.lower() == 'wind' and wind_mph > 30:
+        if weather_condition.lower() == 'rain' and (precip_in >= 0.3 or wind_mph >= 30):
             affected_zip_codes.add(zip_code)
 
     return affected_zip_codes  # return the set of affected zip codes
