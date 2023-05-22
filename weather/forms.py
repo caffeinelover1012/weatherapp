@@ -6,6 +6,13 @@ from django.utils import timezone
 from django.db import models
 import requests
 
+class BulkMessageForm(forms.Form):
+    customers = forms.ModelMultipleChoiceField(
+        queryset=Customer.objects.all(),
+        widget=forms.CheckboxSelectMultiple
+    )
+    text_template = forms.CharField(widget=forms.Textarea)
+
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer

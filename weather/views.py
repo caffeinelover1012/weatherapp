@@ -15,7 +15,7 @@ from twilio.rest import Client
 from .models import Message, Customer
 from django.conf import settings
 from django import forms
-from .forms import MessageForm
+from .forms import MessageForm, BulkMessageForm
 from .filters import CustomerFilter
 from django.views.generic.edit import UpdateView, DeleteView, FormView
 from django.urls import reverse_lazy
@@ -211,3 +211,30 @@ class SendMessageView(FormView):
 
     def get_success_url(self):
         return reverse_lazy('customer', kwargs={'id': self.kwargs.get('id')})
+    
+class BulkMessageView(FormView):
+    template_name = 'bulk_message.html'
+    form_class = BulkMessageForm
+
+    def form_valid(self, form):
+        customers = form.cleaned_data['customers']
+        text_template = form.cleaned_data['text_template']
+
+        # You need to set these values to your Twilio Account SID and Auth token
+        account_sid = 'AC42589e35c4322239bc687d7a46d47632'
+        auth_token = 'f9edf75550296ce6847705832344730a'
+        client = Client(account_sid, auth_token)
+
+        for customer in customers:
+            phone_number = customer.phone_number
+            if phone_number:
+                text = text_template.replace("[full_name]", customer.full_name).replace("[zip_code]", customer.zip_code)
+                client.messages.create(
+                    body=text,
+                    from_='+18556425052',
+                    to=phone_number
+                )
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('bulk_message')

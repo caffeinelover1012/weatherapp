@@ -40,7 +40,14 @@
             <a href="{% url 'add_customer' %}" class="btn btn-primary">
               <i class="fas fa-user-plus"></i> Add Customer
             </a>
+            <button id="send-message-button" class="btn btn-primary" disabled>
+              <i class="fas fa-envelope"></i> Send Message
+            </button>
           </div>
+
+          <form id="bulk-send-message-form" method="POST" action="{% url 'bulk_message' %}" style="display: none;">
+            {% csrf_token %}
+          </form>    
   
           <table class="table table-striped mt-4 table-hover">
               <thead>
@@ -70,6 +77,9 @@
                     <td>{{ customer.email }}</td>
                     <td>{{ customer.address }}</td>
                     <td>{{ customer.zip_code }}</td>
+                    <td>
+                      <input type="checkbox" class="customer-checkbox" data-customer-id="{{ customer.id }}" onchange="updateSendMessageButton()">
+                    </td>
                   </tr>
                 {% empty %}
                   <tr>
@@ -82,3 +92,44 @@
       </div>
   </div>
 {% endblock %}
+
+{% block scripts %}
+  <script>
+    function updateSendMessageButton() {
+      const checkboxes = Array.from(document.querySelectorAll('.customer-checkbox'));
+      const checkedCheckboxes = checkboxes.filter(cb => cb.checked);
+
+      if (checkedCheckboxes.length > 0) {
+        document.getElementById('send-message-button').disabled = false;
+      } else {
+        document.getElementById('send-message-button').disabled = true;
+      }
+    }
+
+    document.getElementById('send-message-button').addEventListener('click', function() {
+      const checkboxes = Array.from(document.querySelectorAll('.customer-checkbox'));
+      const checkedCheckboxes = checkboxes.filter(cb => cb.checked);
+
+      checkedCheckboxes.forEach(cb => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'customers';
+        input.value = cb.getAttribute('data-customer-id');
+        document.getElementById('bulk-send-message-form').appendChild(input);
+      });
+
+      if (checkedCheckboxes.length === 1) {
+        const id = checkedCheckboxes[0].getAttribute('data-customer-id');
+        window.location.href = `{% url 'send_message' id=999 %}`.replace('999', id);
+      } else if (checkedCheckboxes.length > 1) {
+        document.getElementById('bulk-send-message-form').submit();
+      }
+    });
+
+    // Add an event listener for each checkbox to check if any checkboxes are selected
+    document.querySelectorAll('.customer-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('change', updateSendMessageButton);
+    });
+  </script>
+{% endblock %}
+
