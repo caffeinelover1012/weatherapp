@@ -130,6 +130,15 @@
     document.querySelectorAll('.customer-checkbox').forEach(checkbox => {
       checkbox.addEventListener('change', updateSendMessageButton);
     });
+
+    window.onload = function() {
+    var checkboxes = document.querySelectorAll('input[type=checkbox]');
+    for (var i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].checked = false;
+    }
+  }
+  
   </script>
+
 {% endblock %}
 
