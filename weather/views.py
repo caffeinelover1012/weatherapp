@@ -19,6 +19,9 @@ from .forms import MessageForm, BulkMessageForm
 from django.views.generic.edit import UpdateView, DeleteView, FormView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from .utils import get_rain_affected_zips, get_wind_affected_zips
+
 
 # Create your views here.
 def index(request):
@@ -158,6 +161,16 @@ def add_customer(request):
 
     return render(request, 'add_customer.html', {'form': form})
 
+def rain_affected_zips(request):
+    print('here?')
+    zips = get_rain_affected_zips()
+    print(zips)
+    return JsonResponse({"zips": list(zips)})
+
+def wind_affected_zips(request):
+    zips = get_wind_affected_zips()
+    return JsonResponse({"zips": list(zips)})
+
 
 
 # views.py
@@ -237,3 +250,5 @@ class BulkMessageView(FormView):
 
     def get_success_url(self):
         return reverse_lazy('bulk_message')
+    
+

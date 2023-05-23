@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from .views import CustomerUpdateView, CustomerDeleteView, SendMessageView
+from .views import get_rain_affected_zips, get_wind_affected_zips
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -17,4 +18,6 @@ urlpatterns = [
     path('customer/<int:id>/send_message', SendMessageView.as_view(), name='send_message'),
     path('bulk_message/', views.BulkMessageView.as_view(), name='bulk_message'),
     path('add_customer/', views.add_customer, name='add_customer'),
+    path('rain_affected_zips/', views.rain_affected_zips, name='rain_affected_zips'),
+    path('wind_affected_zips/', views.wind_affected_zips, name='wind_affected_zips'),
 ]

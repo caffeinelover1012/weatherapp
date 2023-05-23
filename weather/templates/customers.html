@@ -77,9 +77,21 @@
                     <td><i class="fas fa-user-circle"></i></td>
                     <td class="name"><a href="{% url 'customer' id=customer.id %}">{{ customer.full_name }}</a></td>
                     <td>{{ customer.phone_number }}</td>
-                    <td>{{ customer.email }}</td>
+                    <td class="email">
+                      {% if customer.email != 'nan'%}
+                        {{ customer.email }}
+                      {% else %}
+                        <span class="text-danger">None</span>
+                      {% endif %}
+                    </td>
                     <td>{{ customer.address }}</td>
-                    <td class="zipcode">{{ customer.zip_code }}</td>
+                    <td class="zipcode">
+                      {% if customer.zip_code %}
+                        {{ customer.zip_code }}
+                      {% else %}
+                        <span class="text-danger">None</span>
+                      {% endif %}
+                    </td>
                     <td>
                       <input type="checkbox" class="customer-checkbox" data-customer-id="{{ customer.id }}" onchange="updateSendMessageButton()">
                     </td>
@@ -111,6 +123,45 @@
   var windFilterCheckbox = document.getElementById("windFilter");
   var nameInput = document.getElementById('full-name-input');
   var zipcodeInput = document.getElementById('zip-code-input');
+
+  var windAffectedZips = [];
+
+  rainFilterCheckbox.addEventListener('change', function() {
+    console.log('Rain checkbox event triggered');
+    if (this.checked) {
+      console.log('A')
+      fetch('/rain_affected_zips/')
+        .then(response => response.json())
+        .then(data => {
+          rainAffectedZips = data.zips;
+          console.log('B')
+          console.log(rainAffectedZips)
+          customersList.filter(filterFunction);
+        });
+    } else {
+      console.log('B')
+      rainAffectedZips = [];
+      customersList.filter(filterFunction);
+    }
+  });
+
+  windFilterCheckbox.addEventListener('change', function() {
+    console.log('Wind checkbox event triggered');
+    if (this.checked) {
+      fetch('/wind_affected_zips/')
+        .then(response => response.json())
+        .then(data => {
+          windAffectedZips = data.zips;
+          customersList.filter(filterFunction);
+        });
+    } else {
+      windAffectedZips = [];
+      customersList.filter(filterFunction);
+    }
+  });
+
+
+
   // Filter function
   function filterFunction(item) {
     var phoneIsMissing = item.elm.getAttribute('data-phone') === 'false';
@@ -122,11 +173,11 @@
     }
 
     if (rainFilterCheckbox.checked) {
-
+      includeInList = includeInList && rainAffectedZips.includes(item.values().zipcode);
     }
 
     if (windFilterCheckbox.checked) {
-      
+      includeInList = includeInList && windAffectedZips.includes(item.values().zipcode);
     }
     
     if (includeInList && nameInput.value) {
