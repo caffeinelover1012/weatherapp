@@ -153,6 +153,7 @@
   
   // Filter the list on page load
   customersList.filter(filterFunction);
+
   function updateSendMessageButton() {
       const checkboxes = Array.from(document.querySelectorAll('.customer-checkbox'));
       const checkedCheckboxes = checkboxes.filter(cb => cb.checked);
