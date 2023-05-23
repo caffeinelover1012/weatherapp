@@ -34,6 +34,7 @@ def get_rain_affected_zips():
     return set(affected_zips)
 
 def get_wind_affected_zips():
+    print('hm?')
     # return a subset of unique_zip_codes where wind is >30mph
     for zip_code in unique_zip_codes:  # iterating through zip codes
         response = requests.get(f'http://api.weatherapi.com/v1/current.json?key=ab0a585060344e8aaf670744232105&q={zip_code}&aqi=no')
@@ -47,7 +48,7 @@ def get_wind_affected_zips():
 
         if 'current' in data:
             wind_mph = data['current']['wind_mph']
-            if wind_mph >= 0:
+            if wind_mph >= 11.9:
                 affected_zips.add(zip_code)
         else:
             print(f"No 'current' data for zip code: {zip_code}")

@@ -123,8 +123,42 @@
   var windFilterCheckbox = document.getElementById("windFilter");
   var nameInput = document.getElementById('full-name-input');
   var zipcodeInput = document.getElementById('zip-code-input');
-
+  var rainAffectedZips = [];
   var windAffectedZips = [];
+
+  function filterFunction(item) {
+    var phoneIsMissing = item.elm.getAttribute('data-phone') === 'false';
+    var includeInList = true;
+    
+    if (excludeMissingContactCheckbox.checked) {
+      console.log(item.values().zipcode);
+      includeInList = !(phoneIsMissing);
+    }
+
+    if (includeInList && rainFilterCheckbox.checked) {
+      includeInList = rainAffectedZips.includes(item.values().zipcode);
+    }
+
+    if (includeInList && windFilterCheckbox.checked) {
+      includeInList = windAffectedZips.includes(item.values().zipcode);
+    }
+    
+    if (includeInList && nameInput.value) {
+      includeInList = item.values().name.toLowerCase().includes(nameInput.value.toLowerCase());
+    }
+    
+    if (includeInList && zipcodeInput.value) {
+      includeInList = item.values().zipcode.includes(zipcodeInput.value);
+    }
+    
+    return includeInList;
+  }
+
+  
+  // Listen for changes
+  excludeMissingContactCheckbox.addEventListener('change', function() {
+    customersList.filter(filterFunction);
+  });
 
   rainFilterCheckbox.addEventListener('change', function() {
     console.log('Rain checkbox event triggered');
@@ -158,42 +192,6 @@
       windAffectedZips = [];
       customersList.filter(filterFunction);
     }
-  });
-
-
-
-  // Filter function
-  function filterFunction(item) {
-    var phoneIsMissing = item.elm.getAttribute('data-phone') === 'false';
-  
-    var includeInList = true;
-    
-    if (excludeMissingContactCheckbox.checked) {
-      includeInList = !(phoneIsMissing);
-    }
-
-    if (rainFilterCheckbox.checked) {
-      includeInList = includeInList && rainAffectedZips.includes(item.values().zipcode);
-    }
-
-    if (windFilterCheckbox.checked) {
-      includeInList = includeInList && windAffectedZips.includes(item.values().zipcode);
-    }
-    
-    if (includeInList && nameInput.value) {
-      includeInList = item.values().name.toLowerCase().includes(nameInput.value.toLowerCase());
-    }
-    
-    if (includeInList && zipcodeInput.value) {
-      includeInList = item.values().zipcode.includes(zipcodeInput.value);
-    }
-    
-    return includeInList;
-  }
-  
-  // Listen for changes
-  excludeMissingContactCheckbox.addEventListener('change', function() {
-    customersList.filter(filterFunction);
   });
   
   nameInput.addEventListener('input', function() {
