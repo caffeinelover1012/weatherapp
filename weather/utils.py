@@ -4,19 +4,32 @@ from openpyxl import load_workbook
 import requests
 from uszipcode import SearchEngine
 from .models import Customer
-API_KEY = '42c4aedf6be59e305e18ba215a373a9b'
 
 unique_zip_codes = set(Customer.objects.exclude(zip_code__isnull=True).values_list('zip_code', flat=True))
+affected_zips = set()
 
 def get_rain_affected_zips():
     # return a subset of unique_zip_codes where rain is >0.25
-    affected_zips = []
+    for zip_code in unique_zip_codes:  # iterating through zip codes
+        response = requests.get(f'http://api.weatherapi.com/v1/current.json?key=ab0a585060344e8aaf670744232105&q={zip_code}&aqi=no')
+        data = response.json()
+        continue
+
+    precip_in = data['current']['totalprecip_in']
+    if precip_in >= 0.01:
+        affected_zips.add(zip_code)
     return set(affected_zips)
 
 def get_wind_affected_zips():
-        # return a subset of unique_zip_codes where wind is >30mph
-    affected_zips = []
-
+    # return a subset of unique_zip_codes where wind is >30mph
+    for zip_code in unique_zip_codes:  # iterating through zip codes
+        response = requests.get(f'http://api.weatherapi.com/v1/current.json?key=ab0a585060344e8aaf670744232105&q={zip_code}&aqi=no')
+        data = response.json()
+        continue
+    
+    wind_mph = data['current']['wind_mph']
+    if wind_mph >= 30:
+        affected_zips.add(zip_code)
     return set(affected_zips)
 
 def process_excel(file_name, nrows):

@@ -107,6 +107,8 @@
   
   // Get the checkboxes and inputs
   var excludeMissingContactCheckbox = document.getElementById('excludeMissingContact');
+  var rainFilterCheckbox = document.getElementById("rainFilter");
+  var windFilterCheckbox = document.getElementById("windFilter");
   var nameInput = document.getElementById('full-name-input');
   var zipcodeInput = document.getElementById('zip-code-input');
   // Filter function
@@ -117,6 +119,14 @@
     
     if (excludeMissingContactCheckbox.checked) {
       includeInList = !(phoneIsMissing);
+    }
+
+    if (rainFilterCheckbox.checked) {
+
+    }
+
+    if (windFilterCheckbox.checked) {
+      
     }
     
     if (includeInList && nameInput.value) {
