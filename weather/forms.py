@@ -39,10 +39,8 @@ class UploadFileForm(forms.Form):
 class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
-        fields = ['customer', 'text', 'send_date']
+        fields = ['text', 'send_date']
         widgets = {
-            'customer': forms.Select(attrs={'class': 'form-control', 'disabled': True}),
             'text': forms.Textarea(attrs={'class': 'form-control'}),
             'send_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'})
-        }  
-
+        }
