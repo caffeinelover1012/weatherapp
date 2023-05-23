@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend&display=swap');
+
+/* Apply Lexend font to an element */
+h2, label, button, table {
+  font-family: 'Lexend', sans-serif;
+  letter-spacing: 1px;
+}
+
+label {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.card {
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+.card-header {
+    background-color: transparent; /* Set background color to transparent */
+    border: none; /* Remove border */
+    text-align: center; /* Align text in the center */
+  }
+
+.card-mini {
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-right: 10px;
+    margin-left: -40px;
+    margin-top: 50px;
+  }
+
+.card-header-mini {
+    background-color: transparent; /* Set background color to transparent */
+    border: none; /* Remove border */
+    text-align: center; /* Align text in the center */
+    font-size: 20px;
+    font-weight: 500;
+  }
+  
+
+.mb-0 {
+    font-weight: bolder;
+    font-size: 36px;
+}
+
+.form-label {
+    font-size: 13px;
+}
+  
+  
+.btn-primary {
+    background-color: rgb(28, 170, 113);
+    border-color: rgb(28, 170, 113);
+    color: white;
+    font-family: 'Lexend', sans-serif;
+    margin-top: 10px;
+    margin-bottom: -5px;
+    font-size: 17px;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+  }
+  
+.btn-primary:hover {
+    background-color: rgb(21, 121, 81);
+    border-color: rgb(21, 121, 81);
+    color: white;
+  }
+
+  .form-check {
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Vertically align the checkbox and label */
+    margin-bottom: 10px; /* Add spacing between form-check elements */
+  }
+  
+  .form-check .form-check-input {
+    margin-right: 10px; /* Add spacing between checkbox and label */
+  }
+
+  .table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .table th,
+  .table td {
+    padding: 5px;
+    text-align: left;
+  }
+  
+  .table th {
+    font-weight: bold;
+  }
+  
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .table-bordered {
+    border: 1px solid #dee2e6;
+  }
+  
+  .table-bordered th,
+  .table-bordered td {
+    border: 1px solid #dee2e6;
+  }
+  
+  .table-bordered th {
+    background-color: #f7f7f7;
+  }
+  
+  /* Add vertical lines to separate table columns */
+  .table-bordered th:not(:last-child),
+  .table-bordered td:not(:last-child) {
+    border-right: 1px solid #ccc; /* Update the color of the vertical lines */
+  }
+  
+  /* Add more space to the first and last columns */
+  .table td:first-child,
+  .table td:last-child,
+  .table th:first-child,
+  .table th:last-child {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  
+  
+  
+  
+  
