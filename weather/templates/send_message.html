@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Send Message to Customer</h1>
+    <h1>Send Message to Customer {{ customer.full_name }}</h1>
 
     <form method="post">
         {% csrf_token %}

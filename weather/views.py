@@ -16,7 +16,6 @@ from .models import Message, Customer
 from django.conf import settings
 from django import forms
 from .forms import MessageForm, BulkMessageForm
-from .filters import CustomerFilter
 from django.views.generic.edit import UpdateView, DeleteView, FormView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
@@ -141,8 +140,8 @@ def message_history(request):
     return render(request, 'message_history.html', {'message_history': message_history})
 
 def customers(request):
-    filter = CustomerFilter(request.GET, queryset=Customer.objects.all())
-    return render(request, 'customers.html', {'filter': filter})
+    customers = Customer.objects.all()
+    return render(request, 'customers.html', {'customers': customers})
 
 
 def add_customer(request):
@@ -187,7 +186,6 @@ class CustomerDeleteView(DeleteView):
     def get_object(self):
         id_ = self.kwargs.get("id")
         return get_object_or_404(Customer, id=id_)
-
 class SendMessageView(FormView):
     template_name = 'send_message.html'
     form_class = MessageForm
@@ -206,12 +204,12 @@ class SendMessageView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['customer'] = get_object_or_404(Customer, id=self.kwargs.get('id'))  # add this line
+        context['customer'] = get_object_or_404(Customer, id=self.kwargs.get('id')) 
         return context
 
     def get_success_url(self):
         return reverse_lazy('customer', kwargs={'id': self.kwargs.get('id')})
-    
+
 class BulkMessageView(FormView):
     template_name = 'bulk_message.html'
     form_class = BulkMessageForm

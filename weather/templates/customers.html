@@ -1,38 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-3 mb-4" style="margin-top:5rem">
-        <div class="card">
-          <div class="card-header">Search</div>
-            <div class="card-body">
-              <form method="GET">
-                <div class="mb-3">
-                  <label class="form-label">{{ filter.form.full_name.label }}</label>
-                  <input type="text" name="{{ filter.form.full_name.name }}" value="{{ filter.form.zip_code.value|default:'' }}" class="form-control">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">{{ filter.form.zip_code.label }}</label>
-                  <input type="text" name="{{ filter.form.zip_code.name }}" value="{{ filter.form.zip_code.value|default:'' }}" class="form-control">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">{{ filter.form.search_by.label }}</label>
-                  <select name="{{ filter.form.search_by.name }}" value="{{ filter.form.search_by.value|default:'' }}" class="form-control">
-                      {% for choice in filter.form.search_by.field.choices %}
-                      <option value="{{ choice.0 }}" {% if filter.form.search_by.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
-                      {% endfor %}
-                  </select>
-                </div>         
-                <div class="mb-3 form-check">
-                  <input class="form-check-input" type="checkbox" name="{{ filter.form.exclude_missing_contact.name }}" id="excludeMissingContact" {% if filter.form.exclude_missing_contact.value %}checked{% endif %}>
-                  <label class="form-check-label" for="excludeMissingContact">Exclude Missing Contact Info</label>
-                </div>
-              
-                <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
-              </form>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-3 mb-4" style="margin-top:5rem">
+      <div class="card">
+        <div class="card-header">Search</div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label class="form-label">Full Name</label>
+              <input id="full-name-input" type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Zip Code</label>
+              <input id="zip-code-input" type="text" class="form-control">
+            </div>
+            <div class="mb-3 form-check">
+              <input class="form-check-input" type="checkbox" id="excludeMissingContact">
+              <label class="form-check-label" for="excludeMissingContact">Exclude Missing Contact Info</label>
             </div>
           </div>
         </div>
+      </div>
         
         <div class="col-lg-8">
           <div class="d-flex justify-content-between align-items-center mt-4">
@@ -43,40 +31,46 @@
             <button id="send-message-button" class="btn btn-primary" disabled>
               <i class="fas fa-envelope"></i> Send Message
             </button>
+            <button id="select-all-button" class="btn btn-primary">
+              <i class="fas fa-check-circle"></i> Select All
+            </button>
+            <button id="clear-all-button" class="btn btn-primary">
+              <i class="fas fa-times-circle"></i> Clear All
+            </button>            
           </div>
 
           <form id="bulk-send-message-form" method="POST" action="{% url 'bulk_message' %}" style="display: none;">
             {% csrf_token %}
           </form>    
   
-          <table class="table table-striped mt-4 table-hover">
+          <table id="customersTable" class="table table-striped mt-4 table-hover">
               <thead>
                 <tr>
-                  <th scope="col">#</th>
+                  <th scope="col" data-sort="counter" class="counter">#</th>
                   <th scope="col"></th>
                   <th scope="col"></th>
-                  <th scope="col">Full Name</th>
-                  <th scope="col">Phone Number</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Address</th>
-                  <th scope="col">Zip Code</th>
+                  <th scope="col" data-sort="name" class="name">Full Name</th>
+                  <th scope="col" data-sort="phone" class="phone">Phone Number</th>
+                  <th scope="col" data-sort="email" class="email">Email</th>
+                  <th scope="col" data-sort="address" class="address">Address</th>
+                  <th scope="col" data-sort="zipcode" class="zipcode">Zip Code</th>
                 </tr>
               </thead>
-              <tbody>
-                {% for customer in filter.qs %}
-                  <tr>
-                    <th scope="row">{{ forloop.counter }}</th>
+              <tbody class="list">
+                {% for customer in customers %}
+                <tr data-phone="{% if customer.phone_number != None %}true{% else %}false{% endif %}">
+                  <th scope="row" class="counter">{{ forloop.counter }}</th>
                     <td>
-                      {% if customer.missing_contact_info %}
-                        <i class="fas fa-flag text-danger"></i>
+                      {% if customer.phone_number == None %}
+                            <i class="fas fa-flag text-danger"></i>
                       {% endif %}
                     </td>
                     <td><i class="fas fa-user-circle"></i></td>
-                    <td><a href="{% url 'customer' id=customer.id %}">{{ customer.full_name }}</a></td>
+                    <td class="name"><a href="{% url 'customer' id=customer.id %}">{{ customer.full_name }}</a></td>
                     <td>{{ customer.phone_number }}</td>
                     <td>{{ customer.email }}</td>
                     <td>{{ customer.address }}</td>
-                    <td>{{ customer.zip_code }}</td>
+                    <td class="zipcode">{{ customer.zip_code }}</td>
                     <td>
                       <input type="checkbox" class="customer-checkbox" data-customer-id="{{ customer.id }}" onchange="updateSendMessageButton()">
                     </td>
@@ -94,8 +88,72 @@
 {% endblock %}
 
 {% block scripts %}
-  <script>
-    function updateSendMessageButton() {
+<script>
+  // Initialize list.js
+  var options = {
+    valueNames: [ 'name', 'phone', 'email', 'address', 'zipcode' ]
+  };
+  
+  var customersList = new List('customersTable', options);
+  
+  // Get the checkboxes and inputs
+  var excludeMissingContactCheckbox = document.getElementById('excludeMissingContact');
+  var nameInput = document.getElementById('full-name-input');
+  var zipcodeInput = document.getElementById('zip-code-input');
+  // Filter function
+  function filterFunction(item) {
+    var phoneIsMissing = item.elm.getAttribute('data-phone') === 'false';
+  
+    var includeInList = true;
+    
+    if (excludeMissingContactCheckbox.checked) {
+      includeInList = !(phoneIsMissing);
+    }
+    
+    if (includeInList && nameInput.value) {
+      includeInList = item.values().name.toLowerCase().includes(nameInput.value.toLowerCase());
+    }
+    
+    if (includeInList && zipcodeInput.value) {
+      includeInList = item.values().zipcode.includes(zipcodeInput.value);
+    }
+    
+    return includeInList;
+  }
+  
+  // Listen for changes
+  excludeMissingContactCheckbox.addEventListener('change', function() {
+    customersList.filter(filterFunction);
+  });
+  
+  nameInput.addEventListener('input', function() {
+    customersList.filter(filterFunction);
+  });
+  
+  zipcodeInput.addEventListener('input', function() {
+    customersList.filter(filterFunction);
+  });
+  
+  // searchBySelect.addEventListener('change', function() {
+  //   if (this.value == 'weather') {
+  //     // Make an AJAX request to your server to get the filtered customers
+  //     fetch('your-endpoint-for-weather-based-filtering')
+  //       .then(response => response.json())
+  //       .then(data => {
+  //         // Update the list with the filtered data
+  //         customersList.clear();
+  //         customersList.add(data);
+  //         customersList.filter(filterFunction);
+  //       });
+  //   } else {
+  //     // Re-filter the list based on the current input values
+  //     customersList.filter(filterFunction);
+  //   }
+  // });
+  
+  // Filter the list on page load
+  customersList.filter(filterFunction);
+  function updateSendMessageButton() {
       const checkboxes = Array.from(document.querySelectorAll('.customer-checkbox'));
       const checkedCheckboxes = checkboxes.filter(cb => cb.checked);
 
@@ -131,14 +189,21 @@
       checkbox.addEventListener('change', updateSendMessageButton);
     });
 
-    window.onload = function() {
-    var checkboxes = document.querySelectorAll('input[type=checkbox]');
-    for (var i = 0; i < checkboxes.length; i++) {
-      checkboxes[i].checked = false;
-    }
-  }
-  
-  </script>
+    document.getElementById('select-all-button').addEventListener('click', function() {
+  document.querySelectorAll('.customer-checkbox').forEach(checkbox => {
+    checkbox.checked = true;
+  });
+  updateSendMessageButton();
+});
 
+document.getElementById('clear-all-button').addEventListener('click', function() {
+  document.querySelectorAll('.customer-checkbox').forEach(checkbox => {
+    checkbox.checked = false;
+  });
+  updateSendMessageButton();
+});
+
+</script>
+  
 {% endblock %}
 
