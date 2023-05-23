@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend&display=swap');
 
 /* Apply Lexend font to an element */
-h2, label, button, table {
+h2, label, button, table{
   font-family: 'Lexend', sans-serif;
   letter-spacing: 1px;
 }
@@ -128,6 +128,12 @@ label {
   .table th:last-child {
     padding-left: 10px;
     padding-right: 10px;
+  }
+
+  .loading {
+    font-family: 'Lexend', sans-serif;
+    letter-spacing: 1px;
+    text-align: center;
   }
   
 

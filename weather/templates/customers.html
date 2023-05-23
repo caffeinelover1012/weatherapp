@@ -17,11 +17,11 @@
             </div>
             <div class="mb-3 form-check">
               <input class="form-check-input" type="checkbox" id="rainFilter">
-              <label class="form-label" for="rainFilter">Precipitation >= 0.25 inches</label>
+              <label class="form-label" for="rainFilter"><b>Precipitation</b> >= 0.25 inches</label>
             </div>
             <div class="mb-3 form-check">
               <input class="form-check-input" type="checkbox" id="windFilter">
-              <label class="form-label" for="windFilter">Wind speed >= 30 mph</label>
+              <label class="form-label" for="windFilter"><b>Wind speed</b> >= 30 mph</label>
             </div>
             <div class="mb-3 form-check">
               <input class="form-check-input" type="checkbox" id="excludeMissingContact">
@@ -51,8 +51,17 @@
           <form id="bulk-send-message-form" method="POST" action="{% url 'bulk_message' %}" style="display: none;">
             {% csrf_token %}
           </form>    
+
+          <div class="loading" id="loading" style="display: none; font-family: 'Lexend', sans-serif;
+          font-size: 20px;
+          margin-top: 250px;
+          letter-spacing: 1px;
+          text-align: center;">
+            LOADING...
+          </div>
   
-          <table id="customersTable" class="table table-striped mt-4 table-hover">
+          <div id="customersTableWrapper">
+            <table id="customersTable" class="table table-striped mt-4 table-hover">
               <thead>
                 <tr>
                   <th scope="col" data-sort="counter" class="counter">#</th>
@@ -103,6 +112,7 @@
                 {% endfor %}
               </tbody>
           </table>
+          </div>
         </div>
       </div>
   </div>
@@ -129,18 +139,19 @@
   function filterFunction(item) {
     var phoneIsMissing = item.elm.getAttribute('data-phone') === 'false';
     var includeInList = true;
+    let trimmedZip = item.values().zipcode.trim();
     
     if (excludeMissingContactCheckbox.checked) {
-      console.log(item.values().zipcode);
+      console.log(trimmedZip);
       includeInList = !(phoneIsMissing);
     }
 
     if (includeInList && rainFilterCheckbox.checked) {
-      includeInList = rainAffectedZips.includes(item.values().zipcode);
+      includeInList = includeInList && rainAffectedZips.includes(trimmedZip);
     }
 
     if (includeInList && windFilterCheckbox.checked) {
-      includeInList = windAffectedZips.includes(item.values().zipcode);
+      includeInList = includeInList && windAffectedZips.includes(trimmedZip);
     }
     
     if (includeInList && nameInput.value) {
@@ -163,17 +174,18 @@
   rainFilterCheckbox.addEventListener('change', function() {
     console.log('Rain checkbox event triggered');
     if (this.checked) {
-      console.log('A')
+      document.getElementById("customersTableWrapper").style.display = "none";
+      document.querySelector("#loading").style.display = "block";
       fetch('/rain_affected_zips/')
         .then(response => response.json())
         .then(data => {
           rainAffectedZips = data.zips;
-          console.log('B')
           console.log(rainAffectedZips)
           customersList.filter(filterFunction);
+          document.getElementById("customersTableWrapper").style.display = "block";
+          document.querySelector("#loading").style.display = "none";
         });
     } else {
-      console.log('B')
       rainAffectedZips = [];
       customersList.filter(filterFunction);
     }
@@ -182,17 +194,24 @@
   windFilterCheckbox.addEventListener('change', function() {
     console.log('Wind checkbox event triggered');
     if (this.checked) {
+      document.getElementById("customersTableWrapper").style.display = "none";
+      document.querySelector("#loading").style.display = "block";
       fetch('/wind_affected_zips/')
         .then(response => response.json())
         .then(data => {
           windAffectedZips = data.zips;
+          console.log(windAffectedZips)
           customersList.filter(filterFunction);
+          document.getElementById("customersTableWrapper").style.display = "block";
+          document.querySelector("#loading").style.display = "none";
         });
     } else {
       windAffectedZips = [];
       customersList.filter(filterFunction);
     }
   });
+
+
   
   nameInput.addEventListener('input', function() {
     customersList.filter(filterFunction);
