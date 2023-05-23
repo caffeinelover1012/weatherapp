@@ -186,6 +186,7 @@ class CustomerDeleteView(DeleteView):
     def get_object(self):
         id_ = self.kwargs.get("id")
         return get_object_or_404(Customer, id=id_)
+        
 class SendMessageView(FormView):
     template_name = 'send_message.html'
     form_class = MessageForm

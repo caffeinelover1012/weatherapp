@@ -33,19 +33,9 @@ def get_rain_affected_zips(api_key, weather):
     return set(affected_zips)
 
 def get_affected_zip_codes(weather_condition):
-    # Add your logic to get the affected zip codes based on the weather condition
     x= get_rain_affected_zips('42c4aedf6be59e305e18ba215a373a9b',weather_condition)
     print("ZIPS",x)
     return x
-
-def get_nearby_zip_codes(zipcode, radius):
-    endpoint = f'https://www.zipcodeapi.com/rest/{API_KEY}/radius.json/{zipcode}/{radius}/mile'
-    response = requests.get(endpoint)
-    if response.status_code == 200:
-        data = response.json()
-        return [zip_info['zip_code'] for zip_info in data['zip_codes']]
-    else:
-        return []
     
 def process_excel(file_name, nrows):
     # Load workbook
