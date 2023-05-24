@@ -22,7 +22,6 @@ from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from .utils import get_rain_affected_zips, get_wind_affected_zips
-RAIN_AFFECTED, WIND_AFFECTED = set(), set()
 
 # Create your views here.
 def index(request):
