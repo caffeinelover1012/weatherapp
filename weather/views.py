@@ -22,6 +22,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from .utils import get_rain_affected_zips, get_wind_affected_zips
+RAIN_AFFECTED, WIND_AFFECTED = set(), set()
 
 # Create your views here.
 def index(request):
@@ -219,10 +220,10 @@ class SendMessageView(FormView):
     def get_success_url(self):
         return reverse_lazy('customer', kwargs={'id': self.kwargs.get('id')})
 
-
 class BulkMessageView(FormView):
     template_name = 'bulk_message.html'
     form_class = BulkMessageForm
+
     
     def form_valid(self, form):
         # Assuming you pass customer ids as a POST parameter named 'customer_ids'
@@ -231,7 +232,7 @@ class BulkMessageView(FormView):
 
         for customer_id in customer_ids:
             customer = Customer.objects.get(id=customer_id)
-            
+
             # Customize the message text for this customer
             text = text_template.replace('[Name]', customer.full_name).replace('[ZIP]', customer.zip_code)
 
@@ -240,6 +241,7 @@ class BulkMessageView(FormView):
                 customer=customer, 
                 text=text
             )
+
             message.save()
 
             # Call your function to send a message to the customer
@@ -252,6 +254,6 @@ class BulkMessageView(FormView):
         return reverse_lazy('customers')
 
 
-    
 
+    
 

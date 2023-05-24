@@ -83,11 +83,22 @@
           <h2 class="section-title">Why Roofing?</h2>
           <p>ROOOFOOFOFOOFOFOOOFFOOF</p>
         </div>
+        <div class="card mb-4">
+          <a href="/upload" class="section-title-link">
+            <h2 class="section-title"><i class="fas fa-user-plus"></i> Add Customers to the Database</h2>
+            <p>Upload Excel File(s)</p>
+          </a>
+        </div>        
       </div>
     </div>
     </div>
     
 
+{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
 {% endblock %}
 
 
