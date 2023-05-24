@@ -34,16 +34,16 @@
         <div class="col-lg-8">
           <div class="d-flex justify-content-between align-items-center mt-4">
             <h1>Customers</h1>
-            <a href="{% url 'add_customer' %}" class="btn btn-primary">
+            <a href="{% url 'add_customer' %}" class="btn btn-secondary">
               <i class="fas fa-user-plus"></i> Add Customer
             </a>
-            <button id="send-message-button" class="btn btn-primary" disabled>
+            <button id="send-message-button" class="btn btn-secondary" disabled>
               <i class="fas fa-envelope"></i> Send Message
             </button>
-            <button id="select-all-button" class="btn btn-primary">
+            <button id="select-all-button" class="btn btn-secondary">
               <i class="fas fa-check-circle"></i> Select All
             </button>
-            <button id="clear-all-button" class="btn btn-primary">
+            <button id="clear-all-button" class="btn btn-secondary">
               <i class="fas fa-times-circle"></i> Clear All
             </button>            
           </div>
@@ -78,11 +78,6 @@
                 {% for customer in customers %}
                 <tr data-phone="{% if customer.phone_number != None %}true{% else %}false{% endif %}">
                   <th scope="row" class="counter">{{ forloop.counter }}</th>
-                    <td>
-                      {% if customer.phone_number == None %}
-                            <i class="fas fa-flag text-danger"></i>
-                      {% endif %}
-                    </td>
                     <td><i class="fas fa-user-circle"></i></td>
                     <td class="name"><a href="{% url 'customer' id=customer.id %}">{{ customer.full_name }}</a></td>
                     <td>{{ customer.phone_number }}</td>
@@ -116,6 +111,7 @@
         </div>
       </div>
   </div>
+  <button onclick="topFunction()" id="myBtn" title="Go to top">^</button>
 {% endblock %}
 
 {% block scripts %}
@@ -135,6 +131,25 @@
   var zipcodeInput = document.getElementById('zip-code-input');
   var rainAffectedZips = [];
   var windAffectedZips = [];
+
+  let mybutton = document.getElementById("myBtn");
+
+  // When the user scrolls down 20px from the top of the document, show the button
+  window.onscroll = function() {scrollFunction()};
+
+  function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      mybutton.style.display = "block";
+    } else {
+      mybutton.style.display = "none";
+    }
+  }
+
+  // When the user clicks on the button, scroll to the top of the document
+  function topFunction() {
+    document.body.scrollTop = 0; 
+    document.documentElement.scrollTop = 0; 
+  }
 
   function filterFunction(item) {
     var phoneIsMissing = item.elm.getAttribute('data-phone') === 'false';
@@ -255,6 +270,10 @@
     document.getElementById('send-message-button').addEventListener('click', function() {
       const checkboxes = Array.from(document.querySelectorAll('.customer-checkbox'));
       const checkedCheckboxes = checkboxes.filter(cb => cb.checked);
+      
+      // Clear old inputs
+      const oldInputs = Array.from(document.querySelectorAll('#bulk-send-message-form input[name="customers"]'));
+      oldInputs.forEach(input => input.remove());
 
       checkedCheckboxes.forEach(cb => {
         const input = document.createElement('input');
@@ -271,6 +290,7 @@
         document.getElementById('bulk-send-message-form').submit();
       }
     });
+
 
     // Add an event listener for each checkbox to check if any checkboxes are selected
     document.querySelectorAll('.customer-checkbox').forEach(checkbox => {

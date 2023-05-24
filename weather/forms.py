@@ -6,13 +6,6 @@ from django.utils import timezone
 from django.db import models
 import requests
 
-class BulkMessageForm(forms.Form):
-    customers = forms.ModelMultipleChoiceField(
-        queryset=Customer.objects.all(),
-        widget=forms.CheckboxSelectMultiple
-    )
-    text_template = forms.CharField(widget=forms.Textarea)
-
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
@@ -44,3 +37,13 @@ class MessageForm(forms.ModelForm):
             'text': forms.Textarea(attrs={'class': 'form-control'}),
             'send_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'})
         }
+
+class BulkMessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['text', 'send_date']
+        widgets = {
+            'text': forms.Textarea(attrs={'class': 'form-control'}),
+            'send_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'})
+        }
+

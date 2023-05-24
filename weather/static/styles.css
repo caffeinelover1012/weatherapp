@@ -70,13 +70,13 @@ label {
   }
 
   .form-check {
-    display: flex; /* Use flexbox for alignment */
-    align-items: center; /* Vertically align the checkbox and label */
-    margin-bottom: 10px; /* Add spacing between form-check elements */
+    display: flex; 
+    align-items: center; 
+    margin-bottom: 10px; 
   }
   
   .form-check .form-check-input {
-    margin-right: 10px; /* Add spacing between checkbox and label */
+    margin-right: 10px; 
   }
 
   .table {
@@ -132,9 +132,32 @@ label {
 
   .loading {
     font-family: 'Lexend', sans-serif;
+    font-size: 20px;
+    margin-top: 30px;
     letter-spacing: 1px;
     text-align: center;
   }
+
+  #myBtn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99;
+    border: none;
+    outline: none;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 18px;
+  }
+  
+  #myBtn:hover {
+    background-color: #555;
+  }
+  
   
 
   

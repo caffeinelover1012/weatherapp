@@ -119,7 +119,6 @@ def send_message(message_id):
         message.sent = True
         message.save()
     return 
-    # return HttpResponseRedirect(reverse('messages'))
 
 def send_message_view(request):
     if request.method == 'POST':
@@ -220,31 +219,65 @@ class SendMessageView(FormView):
     def get_success_url(self):
         return reverse_lazy('customer', kwargs={'id': self.kwargs.get('id')})
 
+def send_bulk_message(message_id):
+    message = get_object_or_404(Message, id=message_id)
+
+    # You need to set these values to your Twilio Account SID and Auth token
+    account_sid = 'AC42589e35c4322239bc687d7a46d47632'
+    auth_token = 'f9edf75550296ce6847705832344730a'
+    client = Client(account_sid, auth_token)
+    
+    phone_number = message.customer.phone_number
+    if phone_number:
+        twilio_message = client.messages.create(
+            body=message.text,
+            from_='+18556425052',  # This is your Twilio phone number
+            to=phone_number
+        )
+
+        # Update the message as sent
+        message.sent = True
+        message.save()
+    return
+
 class BulkMessageView(FormView):
     template_name = 'bulk_message.html'
     form_class = BulkMessageForm
 
     def form_valid(self, form):
-        customers = form.cleaned_data['customers']
-        text_template = form.cleaned_data['text_template']
+        text = form.cleaned_data['text']
+        send_date = form.cleaned_data['send_date']
 
-        # You need to set these values to your Twilio Account SID and Auth token
-        account_sid = 'AC42589e35c4322239bc687d7a46d47632'
-        auth_token = 'f9edf75550296ce6847705832344730a'
-        client = Client(account_sid, auth_token)
+        customer_ids = self.request.session.get('customer_ids', [])
+        customers = Customer.objects.filter(id__in=customer_ids)
 
+        # Create a message for each customer and save their ids
+        message_ids = []
         for customer in customers:
-            phone_number = customer.phone_number
-            if phone_number:
-                text = text_template.replace("[full_name]", customer.full_name).replace("[zip_code]", customer.zip_code)
-                client.messages.create(
-                    body=text,
-                    from_='+18556425052',
-                    to=phone_number
-                )
+            message = Message.objects.create(
+                text=text,
+                send_date=send_date,
+                customer=customer
+            )
+            message_ids.append(message.id)
+
+        # Send the messages and update them as sent
+        for message_id in message_ids:
+            send_bulk_message(message_id)
+
+        messages.success(self.request, "Messages sent successfully.")
         return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        customer_ids = self.request.session.get('customer_ids', [])
+        context['customers'] = Customer.objects.filter(id__in=customer_ids)
+        return context
 
     def get_success_url(self):
         return reverse_lazy('bulk_message')
+
+
+
     
 
