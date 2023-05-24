@@ -5,6 +5,7 @@ import requests
 from uszipcode import SearchEngine
 from .models import Customer
 import json
+from django.core.cache import cache
 
 unique_zip_codes = set(Customer.objects.exclude(zip_code__isnull=True).values_list('zip_code', flat=True))
 affected_zips = set()
@@ -51,6 +52,12 @@ def get_wind_affected_zips():
             print(f"No 'current' data for zip code: {zip_code}")
     return set(affected_zips)
 
+def update_affected_zips():
+    rain_affected_zips = get_rain_affected_zips()
+    wind_affected_zips = get_wind_affected_zips()
+
+    cache.set('rain_affected_zips', rain_affected_zips, 3600 * 6)  # Cache for 6 hours
+    cache.set('wind_affected_zips', wind_affected_zips, 3600 * 6)  # Cache for 6 hours
 
 
 def process_excel(file_name, nrows):

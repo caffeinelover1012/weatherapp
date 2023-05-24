@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'weather',
     'widget_tweaks',
-    'django_filters'
+    'django_filters',
 ]
 
 MIDDLEWARE = [

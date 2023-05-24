@@ -8,6 +8,7 @@ from django.utils import timezone
 from .forms import CustomerForm, LoginForm, RegistrationForm
 from .models import Customer
 import json
+from django.core.cache import cache
 from .forms import UploadFileForm
 from .utils import process_excel
 from django.shortcuts import get_object_or_404
@@ -21,7 +22,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from .utils import get_rain_affected_zips, get_wind_affected_zips
-
+RAIN_AFFECTED, WIND_AFFECTED = set(), set()
 
 # Create your views here.
 def index(request):
@@ -162,16 +163,12 @@ def add_customer(request):
     return render(request, 'add_customer.html', {'form': form})
 
 def rain_affected_zips(request):
-    print('here?')
-    zips = get_rain_affected_zips()
-    print(zips)
+    zips = cache.get('rain_affected_zips')
     return JsonResponse({"zips": list(zips)})
 
 def wind_affected_zips(request):
-    zips = get_wind_affected_zips()
+    zips = cache.get('wind_affected_zips')
     return JsonResponse({"zips": list(zips)})
-
-
 
 # views.py
 class CustomerUpdateView(UpdateView):
