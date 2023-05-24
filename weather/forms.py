@@ -38,12 +38,11 @@ class MessageForm(forms.ModelForm):
             'send_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'})
         }
 
-class BulkMessageForm(forms.ModelForm):
-    class Meta:
-        model = Message
-        fields = ['text', 'send_date']
-        widgets = {
-            'text': forms.Textarea(attrs={'class': 'form-control'}),
-            'send_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'})
-        }
 
+class BulkMessageForm(forms.Form):
+    customers = forms.MultipleChoiceField(choices=[], widget=forms.MultipleHiddenInput)
+    message = forms.CharField(widget=forms.Textarea)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['customers'].choices = [(c.id, c.full_name) for c in Customer.objects.all()]

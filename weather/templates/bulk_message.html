@@ -1,26 +1,13 @@
-<!-- bulk_message.html -->
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
-    <h1>Send Message to {{ customers|length }} Customers</h1>
+    <h1>Send Bulk Message to Customers</h1>
 
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button class="btn btn-primary" type="submit">Send</button>
     </form>
-
-    <div class="mt-3">
-        <h2>Selected Customers:</h2>
-        <ul>
-            {% for customer in customers %}
-            <li>{{ customer.full_name }} - {{ customer.phone_number }}</li>
-            {% empty %}
-            <li>No customers selected.</li>
-            {% endfor %}
-        </ul>
-    </div>
-    
 
     <a href="{% url 'customers' %}" class="btn btn-secondary mt-3">Back to Customers</a>
 {% endblock %}
