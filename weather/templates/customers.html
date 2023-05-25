@@ -66,7 +66,6 @@
                 <tr>
                   <th scope="col" data-sort="counter" class="counter">#</th>
                   <th scope="col"></th>
-                  <th scope="col"></th>
                   <th scope="col" data-sort="name" class="name">Full Name</th>
                   <th scope="col" data-sort="phone" class="phone">Phone Number</th>
                   <th scope="col" data-sort="email" class="email">Email</th>
@@ -268,6 +267,18 @@
     }
 
     document.getElementById('send-message-button').addEventListener('click', function() {
+            // Clear all filters
+      excludeMissingContactCheckbox.checked = false;
+      rainFilterCheckbox.checked = false;
+      windFilterCheckbox.checked = false;
+      nameInput.value = '';
+      zipcodeInput.value = '';
+      rainAffectedZips = [];
+      windAffectedZips = [];
+
+      // Re-filter the list without any conditions
+      customersList.filter();
+
       const checkboxes = Array.from(document.querySelectorAll('.customer-checkbox'));
       const checkedCheckboxes = checkboxes.filter(cb => cb.checked);
       

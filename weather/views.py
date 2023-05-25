@@ -224,6 +224,10 @@ class BulkMessageView(FormView):
     template_name = 'bulk_message.html'
     form_class = BulkMessageForm
 
+    def get_context_data(self, form,  **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['customers'] = form.cleaned_data['customers']
+        return context
     
     def form_valid(self, form):
         # Assuming you pass customer ids as a POST parameter named 'customer_ids'
@@ -249,6 +253,7 @@ class BulkMessageView(FormView):
             send_message(message.id)
         messages.success(self.request, f'Sent {len(customer_ids)} Bulk messages successfully!')
         return super().form_valid(form)
+
 
     def get_success_url(self):
         return reverse_lazy('customers')

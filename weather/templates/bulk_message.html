@@ -1,13 +1,63 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 {% block content %}
-    <h1>Send Bulk Message to Customers</h1>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-primary" type="submit">Send</button>
-    </form>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card mt-5">
+                <div class="card-header bg-primary text-white">
+                    <h3><i class="fa fa-envelope"></i> Send Bulk Message to {{ customers|length  }}  Customers</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="bulk-message-form">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        {% if forloop.first %}
+                        <div class="form-group">
+                            {{ field.as_hidden }}
+                        </div>
+                        {% else %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field|add_class:"form-control" }}
+                            {% if field.errors %}
+                                <div class="invalid-feedback">
+                                    {{ field.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        <div class="text-center">
+                        <button class="btn btn-primary m-2" type="submit"><i class="fa fa-paper-plane"></i> Send</button>
+                    </div>
+                    </form>
+                    <div class="mt-4 text-muted">
+                        <p>Use these placeholders in your message:</p>
+                        <ul>
+                            <li><strong>[Name]</strong> - Will be replaced with the recipient's name</li>
+                            <li><strong>[ZIP]</strong> - Will be replaced with the recipient's ZIP code</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <a href="{% url 'customers' %}" class="btn btn-secondary">
+                    <i class="fa fa-arrow-left"></i> Back to Customers
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <a href="{% url 'customers' %}" class="btn btn-secondary mt-3">Back to Customers</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    #bulk-message-form textarea {
+        height: 150px;
+    }
+</style>
 {% endblock %}
