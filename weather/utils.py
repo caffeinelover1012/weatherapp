@@ -25,7 +25,7 @@ def get_rain_affected_zips():
         if 'current' in data:
             precip_in = data['current']['precip_in']
             print(data)
-            if precip_in >= 0.25:
+            if precip_in >= 0.05:
                 affected_zips.add(zip_code)
         else:
             print(f"No 'current' data for zip code: {zip_code}")
